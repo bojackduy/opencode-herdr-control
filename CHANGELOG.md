@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.2 (2026-09-27)
+
+- Fix: `herdr_workspace_create` / `herdr_tab_create` no longer create duplicates when a call is double-fired or retried — in-flight calls are shared and identical label+cwd results are reused for 90s. Create timeout raised to 120s.
+- Fix: false startup warning "Could not resolve OpenCode server URL". The server URL is now resolved lazily at split time (preferring the URL OpenCode provides), failures are not cached, and the warning only appears when a split is actually skipped.
+
+## 0.1.1 (2026-09-25)
+
+- License changed to AGPL-3.0-or-later, preserving the upstream MIT notice.
+
 ## 0.1.0 (2026-09-24) — Initial release
 
 Forked from `gustavocaiano/opencode-herdr` (auto-split panes for subagent visibility) and renamed to `@bojackduy/opencode-herdr-control`.
