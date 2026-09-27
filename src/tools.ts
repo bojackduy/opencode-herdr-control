@@ -225,20 +225,19 @@ export function createHerdrTools() {
     }),
 
     herdr_agent_prompt: tool({
-      description: "Send work to a running herdr agent (e.g. opencode you started). Use --wait to wait for idle/done/blocked.",
+      description: "Submit work to a running Herdr pane agent and return its delivery acknowledgement. This is separate from Fleet session delegation. Opt into wait only for short turns: it waits for agent idle/done/blocked, not a task-specific reply, and the caller may be aborted while the target keeps working. For long work, submit without wait and inspect the pane later; do not retry just because a wait was aborted.",
       args: {
         target: tool.schema.string().describe("Agent name or pane ID hosting the agent"),
         prompt: tool.schema.string().describe("Work prompt to submit, e.g. 'Review diff and fix tests'"),
-        wait: tool.schema.boolean().optional().describe("Wait for completion. Default true."),
-        timeoutMs: tool.schema.number().optional().describe("Wait timeout ms. Default 120000."),
+        wait: tool.schema.boolean().optional().describe("Wait for agent idle/done/blocked (not task-specific completion). Default false."),
+        timeoutMs: tool.schema.number().optional().describe("Wait timeout ms when wait=true. Default 120000."),
       },
       async execute(args) {
         ensureInHerdr()
-        const extra: string[] = []
-        if (args.wait ?? true) {
-          extra.push("--wait", "--timeout", String(args.timeoutMs ?? 120000))
+        if (args.wait === true) {
+          return await execHerdrLong(["agent", "prompt", args.target, args.prompt, "--wait", "--timeout", String(args.timeoutMs ?? 120000)], (args.timeoutMs ?? 120000) + 15000)
         }
-        return await execHerdrLong(["agent", "prompt", args.target, args.prompt, ...extra], (args.timeoutMs ?? 120000) + 15000)
+        return await execHerdr(["agent", "prompt", args.target, args.prompt])
       },
     }),
 

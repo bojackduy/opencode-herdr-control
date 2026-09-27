@@ -59,6 +59,10 @@ When a subagent session is created, the plugin:
 
 **Note:** OpenCode must be started with `--port 0` (or any port) for `opencode attach` to work. Without this, the plugin will emit a one-time warning and skip all splits.
 
+## Prompting a pane agent
+
+`herdr_agent_prompt` invokes `herdr agent prompt <target> <text>` and returns the submission acknowledgement by default (`wait: false`). For a short turn, `wait: true` adds Herdr's `--wait --timeout`: it waits for the agent to reach idle, done, or blocked, **not** for a reply tied to this particular prompt. If the caller's tool run is aborted while waiting, the target may still be working; inspect its pane before considering another submission. Fleet's `fleet_exec` instead addresses an OpenCode session ID through its own direct/spool transport and waits for a `DONE:` reply.
+
 ## How It Works
 
 | Event | Action |

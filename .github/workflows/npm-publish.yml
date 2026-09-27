@@ -49,7 +49,7 @@ jobs:
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
       - name: Typecheck & build
-        run: bun run prepack
+        run: bun test && bun run prepack
 
       - name: Publish to npm
         run: npm publish --access public

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.5 (2026-09-27)
+
+- Fix: `herdr_agent_prompt` returns after submission by default instead of blocking the caller while the pane agent works. Waiting for Herdr's idle/done/blocked state remains available with `wait: true`; the tool and README clarify that this is distinct from Fleet's task-specific `DONE:` reply.
+
 ## 0.1.4 (2026-09-27)
 
 - Fix: false startup warning "Could not resolve OpenCode server URL". The server URL is now resolved lazily at split time (preferring the URL OpenCode provides), failures are not cached, and the warning only appears when a split is actually skipped.
