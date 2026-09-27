@@ -3,7 +3,7 @@ import { isInHerdr, getCurrentPaneId, splitPane, runInPane, closePane, resolveSe
 import { loadConfig } from "./config"
 import { createHerdrTools } from "./tools"
 
-const plugin: Plugin = async ({ client, $ }) => {
+const plugin: Plugin = async ({ $, serverUrl: providedServerUrl }) => {
   const herdrTools = createHerdrTools()
 
   // Early exit if not in herdr — still expose tools (they fail with clear error outside herdr)
@@ -16,9 +16,9 @@ const plugin: Plugin = async ({ client, $ }) => {
     }
   }
 
-  // Load config and resolve server URL at startup
+  // Load config at startup. Server URL is resolved lazily at split time:
+  // plugins init before OpenCode's server is listening.
   const config = loadConfig()
-  const serverUrl = resolveServerUrl()
   const originalPaneId = await getCurrentPaneId($)
 
   // State
@@ -104,6 +104,7 @@ const plugin: Plugin = async ({ client, $ }) => {
       if (e.type === "session.created") {
         if (!config.splits) return
         if (!e.data?.parentID) return
+        const serverUrl = resolveServerUrl(providedServerUrl)
         if (!serverUrl) return
         const sessionId = e.data?.id
         if (!sessionId) return
